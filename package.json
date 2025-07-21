@@ -1,6 +1,6 @@
 {
   "name": "qr-scanner",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A javascript QR scanner library",
   "main": "qr-scanner.umd.min.js",
   "module": "qr-scanner.min.js",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nimiq/qr-scanner.git"
+    "url": "git+https://github.com/npm-dependency-hell/qr-scanner.git"
   },
   "keywords": [
     "qr",
@@ -35,12 +35,12 @@
     "fast",
     "web"
   ],
-  "author": "Nimiq (https://nimiq.com)",
+  "author": "Nimiq (https://nimiq.com) + contributors",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nimiq/qr-scanner/issues"
+    "url": "https://github.com/npm-dependency-hell/qr-scanner/issues"
   },
-  "homepage": "https://github.com/nimiq/qr-scanner#readme",
+  "homepage": "https://github.com/npm-dependency-hell/qr-scanner#readme",
   "dependencies": {
     "@types/offscreencanvas": "^2019.6.4"
   },
