@@ -17,7 +17,7 @@ The library supports scanning a continuous video stream from a web cam as well a
 
 Original development of this library is sponsored by [nimiq](https://www.nimiq.com), world's first browser based blockchain.
 
-[<img src="https://github.com/npm-dependency-hell/qr-scanner/assets/nimiq_logo_rgb_horizontal.svg" alt="nimiq.com" width="250">](https://nimiq.com)
+[<img src="https://github.com/npm-dependency-hell/qr-scanner/blob/master/assets/nimiq_logo_rgb_horizontal.svg" alt="nimiq.com" width="250">](https://nimiq.com)
 
 
 ## Setup
