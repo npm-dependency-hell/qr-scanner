@@ -648,10 +648,12 @@ class QrScanner {
         // Chromium based browsers, regardless of the version. For that constellation, the BarcodeDetector does not
         // error but does not detect QR codes. Macs without an M1/M2 or before Ventura are fine.
         // See issue #209 and https://bugs.chromium.org/p/chromium/issues/detail?id=1382442
-        // TODO update this once the issue in macOS is fixed
+        // UPDATE: ISSUE RESOLVED in Chrome > 113 / CREDIT: 
+        // Enable BarcodeDetector in M* chips in Chromium versions after 113 by alsherko (https://github.com/alsherko)
+        // https://github.com/nimiq/qr-scanner/pull/243/commits/8c01cd4d9d9ef1640246d1f96969e69111046e52
         const userAgentData = navigator.userAgentData;
         const isChromiumOnMacWithArmVentura = userAgentData // all Chromium browsers support userAgentData
-            && userAgentData.brands.some(({ brand }) => /Chromium/i.test(brand))
+            && userAgentData.brands.some(({ brand, version }) => /Chromium/i.test(brand) && parseInt(version) < 113)
             && /mac ?OS/i.test(userAgentData.platform)
             // Does it have an ARM chip (e.g. M1/M2) and Ventura? Check this last as getHighEntropyValues can
             // theoretically trigger a browser prompt, although no browser currently does seem to show one.
