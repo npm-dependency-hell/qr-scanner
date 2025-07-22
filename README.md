@@ -1,3 +1,5 @@
+> [!NOTE]
+> forked and maintained by **npm-dependency-hell**
 # QR Scanner (FORK)
 
 Javascript QR Code Scanner based on [Cosmo Wolfe's javascript port](https://github.com/cozmo/jsqr) of [Google's ZXing library](https://github.com/zxing/zxing).
