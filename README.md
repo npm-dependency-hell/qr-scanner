@@ -17,7 +17,7 @@ According to [our benchmarking](https://github.com/danimoh/qr-scanner-benchmark)
 
 The library supports scanning a continuous video stream from a web cam as well as scanning of single images.
 
-Original development of this library is sponsored by [nimiq](https://www.nimiq.com), world's first browser based blockchain.
+Original development of this library was sponsored by [nimiq](https://www.nimiq.com), world's first browser based blockchain.
 
 [<img src="https://github.com/npm-dependency-hell/qr-scanner-ndh/blob/main/assets/nimiq_logo_rgb_horizontal.svg" alt="nimiq.com" width="250">](https://nimiq.com)
 
