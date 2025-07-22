@@ -11,7 +11,6 @@ declare class QrScanner {
     readonly $overlay?: HTMLDivElement;
     private readonly $codeOutlineHighlight?;
     private readonly _onDecode?;
-    private readonly _legacyOnDecode?;
     private readonly _legacyCanvasSize;
     private _preferredCamera;
     private readonly _maxScansPerSecond;
@@ -23,7 +22,7 @@ declare class QrScanner {
     private _paused;
     private _flashOn;
     private _destroyed;
-    constructor(video: HTMLVideoElement, onDecode: ((result: QrScanner.ScanResult) => void) | ((result: string) => void), options?: number | ((error: Error | string) => void) | {
+    constructor(video: HTMLVideoElement, onDecode: ((result: QrScanner.ScanResult) => void), options?: {
         onDecodeError?: (error: Error | string) => void;
         calculateScanRegion?: (video: HTMLVideoElement) => QrScanner.ScanRegion;
         preferredCamera?: QrScanner.FacingMode | QrScanner.DeviceId;
@@ -51,11 +50,7 @@ declare class QrScanner {
         fullCanvas?: HTMLCanvasElement | null;
         disallowCanvasResizing?: boolean;
         alsoTryWithoutScanRegion?: boolean;
-        /** just a temporary flag until we switch entirely to the new api */
-        returnDetailedScanResult?: true;
     }): Promise<QrScanner.ScanResult>;
-    /** @deprecated */
-    static scanImage(imageOrFileOrBlobOrUrl: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | SVGImageElement | File | Blob | URL | String, scanRegion?: QrScanner.ScanRegion | null, qrEngine?: Worker | BarcodeDetector | Promise<Worker | BarcodeDetector> | null, canvas?: HTMLCanvasElement | null, fullCanvas?: HTMLCanvasElement | null, disallowCanvasResizing?: boolean, alsoTryWithoutScanRegion?: boolean): Promise<string>;
     setGrayscaleWeights(red: number, green: number, blue: number, useIntegerApproximation?: boolean): void;
     setInversionMode(inversionMode: QrScanner.InversionMode): void;
     static createQrEngine(): Promise<Worker | BarcodeDetector>;
