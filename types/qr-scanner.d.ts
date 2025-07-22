@@ -30,8 +30,6 @@ declare class QrScanner {
         highlightScanRegion?: boolean;
         highlightCodeOutline?: boolean;
         overlay?: HTMLDivElement;
-        /** just a temporary flag until we switch entirely to the new api */
-        returnDetailedScanResult?: true;
     });
     hasFlash(): Promise<boolean>;
     isFlashOn(): boolean;

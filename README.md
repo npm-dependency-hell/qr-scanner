@@ -95,7 +95,6 @@ Supported options are:
 | `highlightScanRegion` | Set this option to `true` for rendering an outline around the scan region on the video stream. This uses an absolutely positioned `div` that covers the scan region. This `div` can either be supplied as option `overlay`, see below, or automatically created and then accessed via `qrScanner.$overlay`. It can be freely styled via CSS, e.g. by setting an outline, border, background color, etc. See the [demo](https://nimiq.github.io/qr-scanner/demo/) for examples. |
 | `highlightCodeOutline` | Set this option to `true` for rendering an outline around detected QR codes. This uses an absolutely positioned `div` on which an SVG for rendering the outline will be placed. This `div` can either be supplied as option `overlay`, see below, or be accessed via `qrScanner.$overlay`. The SVG can be freely styled via CSS, e.g. by setting the fill color, stroke color, stroke width, etc. See the [demo](https://nimiq.github.io/qr-scanner/demo/) for examples. For more special needs, you can also use the `cornerPoints` directly, see below, for rendering an outline or the points yourself. |
 | `overlay` | A custom `div` that can be supplied for use for `highlightScanRegion` and `highlightCodeOutline`. The `div` should be a sibling of `videoElem` in the DOM. If this option is supplied, the default styles for `highlightCodeOutline` are not applied as the expectation is that the element already has some custom style applied to it. |
-| `returnDetailedScanResult` | Enforce reporting detailed scan results, see below. |
 
 To use the default value for an option, omit it or supply `undefined`.
 
@@ -148,17 +147,15 @@ Supported options are:
 | `canvas` | A manually created canvas to be reused. This improves performance if you're scanning a lot of images. A canvas can be manually created via a `<canvas>` tag in your markup or `document.createElement('canvas')`. By default, no canvas is reused for single image scanning. |
 | `disallowCanvasResizing` | Request a provided canvas for reuse to not be resized, irrespective of the source image or source region dimensions. Note that the canvas and source region should have the same aspect ratio to avoid that the image to scan gets distorted which could make detecting QR codes impossible. By default, the canvas size is adapted to the scan region dimensions or down scaled scan region for single image scanning. |
 | `alsoTryWithoutScanRegion` | Request a second scan on the entire image if a `scanRegion` was provided and no QR code was found within that region. By default, no second scan is attempted. |
-| `returnDetailedScanResult` | Enforce reporting detailed scan results, see below. |
 
 To use the default value for an option, omit it or supply `undefined`.
 
-Returned results depend on whether an options object was provided:
-- If no options object was provided, the result is a string with the read QR code's content. The simple string return type is for backwards compatibility, is now deprecated and will be removed in the future.
-- If an options object was provided the result is an object with properties `data` which is the read QR code's string content and `cornerPoints` which are the corner points of the read QR code's outline on the camera stream.
+Returned results are passed as an object:
+* `data`: the read QR code's string content
+* `cornerPoints`: the corner points of the read QR code's outline on the camera stream
+* `image`: the scanned image as an HTMLCanvasElement
 
-To avoid usage of the deprecated api if you're not supplying any other options, you can supply `{ returnDetailedScanResult: true }` to enable the new api and get the detailed scan result.
-
-If no QR code could be read, `scanImage` throws.
+If no QR code could be read, `scanImage` throws an exception.
 
 ### Checking for Camera availability
 
