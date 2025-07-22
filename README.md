@@ -76,20 +76,10 @@ Create a `<video>` element where the web cam video stream should get rendered:
 
 #### 2. Create a QrScanner Instance
 ```js
-// To enforce the use of the new api with detailed scan results, call the constructor with an options object, see below.
 const qrScanner = new QrScanner(
     videoElem,
     result => console.log('decoded qr code:', result),
-    { /* your options or returnDetailedScanResult: true if you're not specifying any other options */ },
-);
-
-// For backwards compatibility, omitting the options object will currently use the old api, returning scan results as
-// simple strings. This old api will be removed in the next major release, by which point the options object is then
-// also not required anymore to enable the new api.
-const qrScanner = new QrScanner(
-    videoElem,
-    result => console.log('decoded qr code:', result),
-    // No options provided. This will use the old api and is deprecated in the current version until next major version.
+    { /* your options ** see below ** */ },
 );
 ```
 
@@ -109,11 +99,10 @@ Supported options are:
 
 To use the default value for an option, omit it or supply `undefined`.
 
-Results passed to the callback depend on whether an options object was provided:
-- If no options object was provided, the result is a string with the read QR code's content. The simple string return type is for backwards compatibility, is now deprecated and will be removed in the future.
-- If an options object was provided the result is an object with properties `data` which is the read QR code's string content and `cornerPoints` which are the corner points of the read QR code's outline on the camera stream.
-
-To avoid usage of the deprecated api if you're not supplying any other options, you can supply `{ returnDetailedScanResult: true }` to enable the new api and get the detailed scan result.
+Results are passed to the callback as an object:
+* `data`: the read QR code's string content
+* `cornerPoints`: the corner points of the read QR code's outline on the camera stream
+* `image`: the scanned image as an HTMLCanvasElement
 
 #### 3. Start scanning
 ```js
