@@ -55,6 +55,7 @@ class QrScanner {
 
     readonly $video: HTMLVideoElement;
     readonly $canvas: HTMLCanvasElement;
+    readonly $fullCanvas: HTMLCanvasElement;
     readonly $overlay?: HTMLDivElement;
     private readonly $codeOutlineHighlight?: SVGSVGElement;
     private readonly _onDecode?: (result: QrScanner.ScanResult) => void;
@@ -123,6 +124,7 @@ class QrScanner {
     ) {
         this.$video = video;
         this.$canvas = document.createElement('canvas');
+        this.$fullCanvas = document.createElement('canvas');
 
         if (canvasSizeOrOnDecodeErrorOrOptions && typeof canvasSizeOrOnDecodeErrorOrOptions === 'object') {
             // we got an options object using the new api
@@ -426,6 +428,7 @@ class QrScanner {
             scanRegion?: QrScanner.ScanRegion | null,
             qrEngine?: Worker | BarcodeDetector | Promise<Worker | BarcodeDetector> | null,
             canvas?: HTMLCanvasElement | null,
+            fullCanvas?: HTMLCanvasElement | null,
             disallowCanvasResizing?: boolean,
             alsoTryWithoutScanRegion?: boolean,
             /** just a temporary flag until we switch entirely to the new api */
@@ -439,6 +442,7 @@ class QrScanner {
         scanRegion?: QrScanner.ScanRegion | null,
         qrEngine?: Worker | BarcodeDetector | Promise<Worker | BarcodeDetector> | null,
         canvas?: HTMLCanvasElement | null,
+        fullCanvas?: HTMLCanvasElement | null,
         disallowCanvasResizing?: boolean,
         alsoTryWithoutScanRegion?: boolean,
     ): Promise<string>;
@@ -456,6 +460,7 @@ class QrScanner {
         } | null,
         qrEngine?: Worker | BarcodeDetector | Promise<Worker | BarcodeDetector> | null,
         canvas?: HTMLCanvasElement | null,
+        fullCanvas?: HTMLCanvasElement | null,
         disallowCanvasResizing: boolean = false,
         alsoTryWithoutScanRegion: boolean = false,
     ): Promise<string | QrScanner.ScanResult> {
@@ -494,11 +499,12 @@ class QrScanner {
             let image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap
                 | SVGImageElement;
             let canvasContext: CanvasRenderingContext2D;
+            let fullCanvasContext: CanvasRenderingContext2D;
             [qrEngine, image] = await Promise.all([
                 qrEngine || QrScanner.createQrEngine(),
                 QrScanner._loadImage(imageOrFileOrBlobOrUrl),
             ]);
-            [canvas, canvasContext] = QrScanner._drawToCanvas(image, scanRegion, canvas, disallowCanvasResizing);
+            [canvas, canvasContext, fullCanvas, fullCanvasContext] = QrScanner._drawToCanvas(image, scanRegion, canvas, fullCanvas, disallowCanvasResizing);
             let detailedScanResult: QrScanner.ScanResult;
 
             if (qrEngine instanceof Worker) {
@@ -523,6 +529,7 @@ class QrScanner {
                             resolve({
                                 data: event.data.data,
                                 cornerPoints: QrScanner._convertPoints(event.data.cornerPoints, scanRegion),
+                                image: fullCanvas!,
                             });
                         } else {
                             reject(QrScanner.NO_QR_CODE_FOUND);
@@ -554,11 +561,13 @@ class QrScanner {
                     )),
                     (async (): Promise<QrScanner.ScanResult> => {
                         try {
-                            const [scanResult] = await qrEngine.detect(canvas!);
+                            const imageData = canvasContext.getImageData(0, 0, canvas!.width, canvas!.height);
+                            const [scanResult] = await qrEngine.detect(imageData!);
                             if (!scanResult) throw QrScanner.NO_QR_CODE_FOUND;
                             return {
                                 data: scanResult.rawValue,
                                 cornerPoints: QrScanner._convertPoints(scanResult.cornerPoints, scanRegion),
+                                image: fullCanvas!,
                             };
                         } catch (e) {
                             const errorMessage = (e as Error).message || e as string;
@@ -824,6 +833,7 @@ class QrScanner {
                     scanRegion: this._scanRegion,
                     qrEngine: this._qrEnginePromise,
                     canvas: this.$canvas,
+                    fullCanvas: this.$fullCanvas,
                 });
             } catch (error) {
                 if (!this._active) return;
@@ -948,9 +958,11 @@ class QrScanner {
             | SVGImageElement,
         scanRegion?: QrScanner.ScanRegion | null,
         canvas?: HTMLCanvasElement | null,
+        fullCanvas?: HTMLCanvasElement | null,
         disallowCanvasResizing= false,
-    ): [HTMLCanvasElement, CanvasRenderingContext2D] {
+    ): [HTMLCanvasElement, CanvasRenderingContext2D, HTMLCanvasElement, CanvasRenderingContext2D] {
         canvas = canvas || document.createElement('canvas');
+        fullCanvas = fullCanvas || document.createElement('canvas');
         const scanRegionX = scanRegion && scanRegion.x ? scanRegion.x : 0;
         const scanRegionY = scanRegion && scanRegion.y ? scanRegion.y : 0;
         const scanRegionWidth = scanRegion && scanRegion.width
@@ -959,6 +971,8 @@ class QrScanner {
         const scanRegionHeight = scanRegion && scanRegion.height
             ? scanRegion.height
             : (image as HTMLVideoElement).videoHeight || image.height as number;
+        const fullWidth = (image as HTMLVideoElement).videoWidth || image.width as number;
+        const fullHeight = (image as HTMLVideoElement).videoHeight || image.height as number;
 
         if (!disallowCanvasResizing) {
             const canvasWidth = scanRegion && scanRegion.downScaledWidth
@@ -975,6 +989,12 @@ class QrScanner {
             if (canvas.height !== canvasHeight) {
                 canvas.height = canvasHeight;
             }
+            if (fullCanvas.width !== fullWidth) {
+                fullCanvas.width = fullWidth
+            }
+            if (fullCanvas.height !== fullHeight) {
+                fullCanvas.height = fullHeight;
+            }
         }
 
         const context = canvas.getContext('2d', { alpha: false })!;
@@ -984,7 +1004,14 @@ class QrScanner {
             scanRegionX, scanRegionY, scanRegionWidth, scanRegionHeight,
             0, 0, canvas.width, canvas.height,
         );
-        return [canvas, context];
+        
+        const fullContext = fullCanvas.getContext('2d', { alpha: false })!;
+        fullContext.imageSmoothingEnabled = false; // gives less blurry images
+        fullContext.drawImage(
+            image, 0, 0, fullCanvas.width, fullCanvas.height,
+        );
+
+        return [canvas, context, fullCanvas, fullContext];
     }
 
     private static async _loadImage(
@@ -1095,6 +1122,7 @@ declare namespace QrScanner {
         data: string;
         // In clockwise order, starting at top left, but this might not be guaranteed in the future.
         cornerPoints: QrScanner.Point[];
+        image: HTMLCanvasElement;
     }
 }
 

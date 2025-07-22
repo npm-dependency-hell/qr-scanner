@@ -35,7 +35,17 @@
     "fast",
     "web"
   ],
-  "author": "Nimiq (https://nimiq.com) + contributors",
+  "author": "Nimiq (https://nimiq.com)",
+  "contributors": [
+    {
+      "name": "iam-sysop",
+      "url": "https://github.com/iam-sysop"
+    },
+    {
+      "name": "dcrawshay",
+      "url": "https://github.com/dcrawshay"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/npm-dependency-hell/qr-scanner-ndh/issues"
