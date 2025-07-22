@@ -650,7 +650,7 @@ class QrScanner {
         // See issue #209 and https://bugs.chromium.org/p/chromium/issues/detail?id=1382442
         // UPDATE: ISSUE RESOLVED in Chrome > 113 / CREDIT: 
         // Enable BarcodeDetector in M* chips in Chromium versions after 113 by alsherko (https://github.com/alsherko)
-        // https://github.com/nimiq/qr-scanner/pull/243/commits/8c01cd4d9d9ef1640246d1f96969e69111046e52
+        // https://github.com/alsherko/qr-scanner/pull/243/commits/8c01cd4d9d9ef1640246d1f96969e69111046e52
         const userAgentData = navigator.userAgentData;
         const isChromiumOnMacWithArmVentura = userAgentData // all Chromium browsers support userAgentData
             && userAgentData.brands.some(({ brand, version }) => /Chromium/i.test(brand) && parseInt(version) < 113)

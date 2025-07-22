@@ -1,6 +1,6 @@
 {
   "name": "qr-scanner-ndh",
-  "version": "1.4.3",
+  "version": "1.4.5",
   "description": "A javascript QR scanner library",
   "main": "qr-scanner.umd.min.js",
   "module": "qr-scanner.min.js",
@@ -44,6 +44,10 @@
     {
       "name": "dcrawshay",
       "url": "https://github.com/dcrawshay"
+    },
+    {
+      "name": "alsherko",
+      "url": "https://github.com/alsherko"
     }
   ],
   "license": "MIT",
